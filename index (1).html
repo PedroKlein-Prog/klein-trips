@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Klein Trips</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Paleta: verde, branco e azul */
+      --verde:        #1a7a4a;
+      --verde-medio:  #239560;
+      --verde-claro:  #e8f5ee;
+      --azul:         #1a3a6b;
+      --azul-medio:   #2756a8;
+      --azul-claro:   #dde9f8;
+      --branco:       #ffffff;
+      --cinza-bg:     #f4f7f6;
+      --cinza-borda:  #d8e2dc;
+      --texto:        #1a2a22;
+      --texto-suave:  #5a7060;
+      --font-display: 'Dancing Script', cursive;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); color: var(--texto); line-height: 1.6; }
+    img  { max-width: 100%; display: block; }
+    a    { text-decoration: none; color: inherit; }
+    ul   { list-style: none; }
+    button { cursor: pointer; font-family: var(--font-body); }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(26, 58, 107, 0.96);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 68px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .nav-logo-icon {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--verde);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--branco); font-size: 0.9rem;
+    }
+    .nav-logo-text {
+      font-family: var(--font-display); font-size: 1.55rem;
+      color: var(--branco); line-height: 1;
+    }
+    .nav-logo-sub {
+      font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em;
+      color: #8ab8e8; text-transform: uppercase; margin-top: 1px;
+    }
+
+    .nav-links {
+      display: flex; gap: 2.2rem;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.82); font-size: 0.88rem; font-weight: 500;
+      letter-spacing: 0.03em; transition: color 0.2s;
+      position: relative; padding-bottom: 4px;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--verde-medio);
+      transform: scaleX(0); transition: transform 0.25s;
+    }
+    .nav-links a:hover { color: var(--branco); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-links a.ativo { color: var(--branco); }
+    .nav-links a.ativo::after { transform: scaleX(1); }
+
+    .btn-plan {
+      background: var(--verde);
+      color: var(--branco);
+      font-weight: 600; font-size: 0.85rem;
+      padding: 0.55rem 1.3rem;
+      border: none; border-radius: 6px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-plan:hover { background: var(--verde-medio); transform: translateY(-1px); }
+
+    .nav-toggle {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none;
+    }
+    .nav-toggle span {
+      display: block; width: 24px; height: 2px;
+      background: var(--branco); border-radius: 2px; transition: background 0.2s;
+    }
+    .nav-toggle:hover span { background: var(--verde-medio); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative; min-height: 100vh;
+      background:
+        linear-gradient(to bottom right, rgba(26,58,107,0.55) 0%, rgba(26,122,74,0.35) 100%),
+        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=80') center/cover no-repeat;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 68px 8% 0;
+    }
+
+    .hero-content { max-width: 580px; }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: var(--branco); font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.35rem 0.9rem; border-radius: 20px; margin-bottom: 1.4rem;
+    }
+    .hero-eyebrow i { color: #6de4a0; }
+
+    .hero h1 {
+      font-weight: 800; line-height: 1.05;
+      color: var(--branco);
+      text-shadow: 0 2px 18px rgba(0,0,0,0.35);
+      margin-bottom: 0.3rem;
+    }
+    .hero h1 .linha-solida { font-size: clamp(2.4rem, 6vw, 4.2rem); display: block; }
+    .hero h1 .linha-script {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      color: #6de4a0; display: block;
+    }
+
+    .hero-sub {
+      color: rgba(255,255,255,0.82); font-size: 1rem; margin: 1rem 0 2rem;
+      max-width: 420px;
+    }
+
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn-hero-primary {
+      background: var(--verde);
+      color: var(--branco); font-weight: 700; font-size: 0.95rem;
+      padding: 0.8rem 2rem; border: none; border-radius: 8px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-hero-primary:hover { background: var(--verde-medio); transform: translateY(-2px); }
+
+    .btn-hero-ghost {
+      background: rgba(255,255,255,0.12); backdrop-filter: blur(6px);
+      color: var(--branco); font-weight: 600; font-size: 0.95rem;
+      padding: 0.8rem 2rem; border: 1.5px solid rgba(255,255,255,0.4); border-radius: 8px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-hero-ghost:hover {
+      background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.7);
+    }
+
+    /* Search bar flutuante */
+    .search-wrap {
+      padding: 0 8%; position: relative; z-index: 10;
+      margin-top: -2rem;
+    }
+    .search-bar {
+      background: var(--branco);
+      border-radius: 14px;
+      box-shadow: 0 8px 40px rgba(26,58,107,0.18);
+      padding: 1.4rem 1.8rem;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr 1fr auto;
+      gap: 0;
+      align-items: end;
+      overflow: hidden;
+    }
+
+    .search-field {
+      padding: 0.5rem 1.2rem;
+      border-right: 1.5px solid var(--cinza-borda);
+    }
+    .search-field:first-child { padding-left: 0.2rem; }
+    .search-field:last-of-type { border-right: none; }
+
+    .search-field label {
+      display: block; font-size: 0.68rem; font-weight: 700;
+      color: var(--texto-suave); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-bottom: 0.3rem;
+    }
+    .search-field-inner {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .search-field-inner i {
+      color: var(--verde); font-size: 0.85rem;
+    }
+    .search-field input {
+      border: none; outline: none;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 500;
+      color: var(--texto); width: 100%;
+      background: transparent;
+    }
+    .search-field input::placeholder { color: #aac; }
+
+    .btn-buscar {
+      background: var(--azul-medio);
+      color: var(--branco); font-weight: 700; font-size: 0.9rem;
+      padding: 1rem 1.8rem;
+      border: none;
+      display: flex; align-items: center; gap: 0.6rem;
+      transition: background 0.2s;
+      white-space: nowrap;
+      margin-left: 0.5rem;
+      border-radius: 8px;
+    }
+    .btn-buscar:hover { background: var(--azul); }
+
+    /* ===== STATS BAR ===== */
+    .stats-bar {
+      background: var(--azul);
+      color: var(--branco);
+      padding: 1.6rem 8%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.3rem 0;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      padding-right: 1.5rem; padding-left: 1.5rem;
+    }
+    .stat-item:first-child { padding-left: 0; }
+    .stat-item:last-child { border-right: none; }
+
+    .stat-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #6de4a0; flex-shrink: 0;
+    }
+    .stat-text strong {
+      display: block; font-size: 0.88rem; font-weight: 700; color: var(--branco);
+    }
+    .stat-text span {
+      font-size: 0.75rem; color: rgba(255,255,255,0.6);
+    }
+
+    /* ===== DESTINOS ===== */
+    .destinos {
+      padding: 6rem 8%;
+      background: var(--branco);
+    }
+
+    .destinos-header {
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: end; gap: 1rem; margin-bottom: 2.5rem;
+    }
+
+    .secao-eyebrow {
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--verde); text-transform: uppercase; letter-spacing: 0.12em;
+      margin-bottom: 0.5rem;
+    }
+
+    .destinos-header h2 {
+      font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800;
+      color: var(--azul); line-height: 1.15;
+    }
+
+    .destinos-header p {
+      font-size: 0.9rem; color: var(--texto-suave);
+      margin-top: 0.5rem; max-width: 280px;
+    }
+
+    .btn-ver-todos {
+      display: flex; align-items: center; gap: 0.5rem;
+      border: 1.5px solid var(--cinza-borda);
+      background: var(--branco); color: var(--texto);
+      font-weight: 600; font-size: 0.82rem;
+      padding: 0.6rem 1.2rem; border-radius: 8px;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .btn-ver-todos:hover { border-color: var(--verde); color: var(--verde); }
+
+    /* Layout hero-destinos: 1 grande + 2 menores */
+    .destinos-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 1fr;
+      gap: 1.2rem;
+      height: 400px;
+    }
+
+    .card-destino {
+      position: relative; border-radius: 14px; overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.35s, box-shadow 0.35s;
+    }
+    .card-destino:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(26,58,107,0.22); }
+
+    .card-destino img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s;
+    }
+    .card-destino:hover img { transform: scale(1.06); }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);
+    }
+
+    .card-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.4rem;
+    }
+    .card-info h3 {
+      color: var(--branco); font-size: 1.2rem; font-weight: 700;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+    }
+    .card-info .card-preco {
+      color: rgba(255,255,255,0.85); font-size: 0.82rem; margin-top: 0.2rem;
+    }
+    .card-info .card-preco strong { color: #6de4a0; }
+
+    .card-badge {
+      position: absolute; top: 1rem; right: 1rem;
+      background: var(--verde);
+      color: var(--branco); font-size: 0.68rem; font-weight: 700;
+      padding: 0.25rem 0.65rem; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    /* ===== SERVIÇOS ===== */
+    .servicos {
+      background: var(--cinza-bg);
+      padding: 3.5rem 8%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .servico-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem;
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+    .servico-item:hover { background: var(--branco); }
+
+    .servico-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--verde-claro);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; color: var(--verde); flex-shrink: 0;
+    }
+    .servico-text strong {
+      display: block; font-size: 0.85rem; font-weight: 700; color: var(--azul);
+    }
+    .servico-text span { font-size: 0.78rem; color: var(--texto-suave); }
+
+    /* ===== PASSEIOS ===== */
+    .passeios {
+      padding: 6rem 8%;
+      background: var(--branco);
+    }
+
+    .passeios-header {
+      text-align: center; margin-bottom: 3rem;
+    }
+    .passeios-header h2 {
+      font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800;
+      color: var(--azul); margin-bottom: 0.5rem;
+    }
+    .passeios-header p {
+      color: var(--texto-suave); font-size: 0.92rem; max-width: 500px; margin: 0 auto;
+    }
+
+    .passeios-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.4rem;
+    }
+
+    .card-passeio {
+      background: var(--branco);
+      border: 1.5px solid var(--cinza-borda);
+      border-radius: 14px; overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+    }
+    .card-passeio:hover {
+      box-shadow: 0 12px 32px rgba(26,58,107,0.14);
+      transform: translateY(-4px);
+      border-color: var(--verde-claro);
+    }
+
+    .card-passeio img {
+      width: 100%; height: 200px; object-fit: cover;
+      transition: transform 0.45s;
+    }
+    .card-passeio:hover img { transform: scale(1.05); }
+
+    .card-passeio-body { padding: 1.2rem 1.3rem 1.4rem; }
+
+    .card-tag {
+      display: inline-block;
+      background: var(--verde-claro); color: var(--verde);
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; padding: 0.2rem 0.6rem; border-radius: 4px;
+      margin-bottom: 0.7rem;
+    }
+
+    .card-passeio-body h3 {
+      font-size: 1rem; font-weight: 700; color: var(--azul); margin-bottom: 0.3rem;
+    }
+    .card-passeio-body p {
+      font-size: 0.8rem; color: var(--texto-suave); margin-bottom: 1rem; line-height: 1.5;
+    }
+
+    .card-passeio-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 0.8rem; border-top: 1px solid var(--cinza-borda);
+    }
+    .card-preco-label { font-size: 0.7rem; color: var(--texto-suave); }
+    .card-preco-valor { font-size: 1.1rem; font-weight: 800; color: var(--azul); }
+    .card-preco-antigo { font-size: 0.75rem; color: #bbb; text-decoration: line-through; }
+
+    .btn-card {
+      background: var(--azul-medio);
+      color: var(--branco); font-weight: 700; font-size: 0.78rem;
+      padding: 0.45rem 1rem; border: none; border-radius: 6px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-card:hover { background: var(--azul); transform: translateY(-1px); }
+
+    /* ===== NEWSLETTER ===== */
+    .newsletter {
+      background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 60%, var(--verde) 100%);
+      padding: 5rem 8%;
+      text-align: center;
+    }
+    .newsletter h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800;
+      color: var(--branco); margin-bottom: 0.6rem;
+    }
+    .newsletter p {
+      color: rgba(255,255,255,0.75); font-size: 0.92rem; margin-bottom: 2rem;
+    }
+    .newsletter-form {
+      display: flex; gap: 0.7rem; justify-content: center; max-width: 440px; margin: 0 auto;
+    }
+    .newsletter-form input {
+      flex: 1; padding: 0.75rem 1.1rem;
+      border: none; border-radius: 8px;
+      font-family: var(--font-body); font-size: 0.9rem; outline: none;
+    }
+    .btn-newsletter {
+      background: var(--verde);
+      color: var(--branco); font-weight: 700; font-size: 0.9rem;
+      padding: 0.75rem 1.5rem; border: none; border-radius: 8px;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-newsletter:hover { background: #15643c; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: #0d1f2d; color: rgba(255,255,255,0.6);
+      padding: 4rem 8% 2rem;
+    }
+
+    .footer-grid {
+      display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+      gap: 3rem; margin-bottom: 3rem;
+    }
+
+    .footer-logo-wrap { margin-bottom: 1rem; }
+    .footer-logo-text {
+      font-family: var(--font-display); font-size: 1.8rem; color: var(--branco);
+    }
+    .footer-logo-sub {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em;
+      color: #4a8a6a; text-transform: uppercase;
+    }
+    .footer-desc { font-size: 0.82rem; line-height: 1.75; color: rgba(255,255,255,0.5); }
+
+    .footer-redes { display: flex; gap: 0.6rem; margin-top: 1.5rem; }
+    .social-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; color: rgba(255,255,255,0.5);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .social-icon:hover {
+      border-color: var(--verde-medio); color: var(--verde-medio);
+      background: rgba(35,149,96,0.1);
+    }
+
+    footer h4 {
+      font-size: 0.78rem; font-weight: 700; color: var(--branco);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 1.2rem;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 0.55rem; }
+    .footer-links a {
+      font-size: 0.82rem; color: rgba(255,255,255,0.5);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #6de4a0; }
+
+    .footer-contato-item {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      font-size: 0.82rem; color: rgba(255,255,255,0.5);
+      margin-bottom: 0.7rem;
+    }
+    .footer-contato-item i { color: var(--verde-medio); margin-top: 3px; font-size: 0.8rem; }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.78rem; color: rgba(255,255,255,0.3);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .destinos-layout { height: 320px; }
+      .passeios-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .servicos { grid-template-columns: repeat(2, 1fr); }
+      .search-bar { grid-template-columns: 1fr 1fr 1fr; }
+      .search-bar .btn-buscar { grid-column: span 3; width: 100%; justify-content: center; margin: 0.5rem 0 0; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 5%; }
+      .nav-links, .btn-plan { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column; gap: 1rem;
+        position: absolute; top: 68px; left: 0; right: 0;
+        background: var(--azul); padding: 1.5rem 5%;
+      }
+      .nav-links.open + .btn-plan { display: none; }
+      .nav-toggle { display: flex; }
+
+      .hero { padding: 68px 5% 3rem; min-height: 85vh; }
+      .search-wrap { padding: 0 5%; }
+      .search-bar { grid-template-columns: 1fr; }
+      .search-field { border-right: none; border-bottom: 1.5px solid var(--cinza-borda); padding: 0.8rem 0; }
+      .search-field:last-of-type { border-bottom: none; }
+      .search-bar .btn-buscar { grid-column: span 1; margin: 0.5rem 0 0; }
+
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .stat-item { border-right: none; padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+      .destinos { padding: 4rem 5%; }
+      .destinos-layout { grid-template-columns: 1fr; height: auto; }
+      .card-destino { height: 240px; }
+      .destinos-header { grid-template-columns: 1fr; }
+
+      .passeios { padding: 4rem 5%; }
+      .passeios-grid { grid-template-columns: 1fr; }
+
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+
+      .newsletter-form { flex-direction: column; }
+      .btn-newsletter { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-icon"><i class="fas fa-plane"></i></div>
+    <div>
+      <div class="nav-logo-text">Klein Trips</div>
+      <div class="nav-logo-sub">Explore the World</div>
+    </div>
+  </a>
+
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#hero" class="ativo">Home</a></li>
+    <li><a href="#destinos">Destinos</a></li>
+    <li><a href="#passeios">Passeios</a></li>
+    <li><a href="#newsletter">Contato</a></li>
+  </ul>
+
+  <button class="btn-plan" onclick="document.getElementById('destinos').scrollIntoView({behavior:'smooth'})">
+    Planejar Viagem
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <i class="fas fa-globe-americas"></i>
+      Explore o Mundo com a Klein Trips
+    </div>
+    <h1>
+      <span class="linha-solida">Descubra.</span>
+      <span class="linha-solida">Explore.</span>
+      <span class="linha-script">Viva a Jornada.</span>
+    </h1>
+    <p class="hero-sub">Explore destinos de tirar o fôlego e crie memórias inesquecíveis com quem você ama.</p>
+    <div class="hero-ctas">
+      <button class="btn-hero-primary" onclick="document.getElementById('destinos').scrollIntoView({behavior:'smooth'})">
+        Ver Destinos
+      </button>
+      <button class="btn-hero-ghost" onclick="document.getElementById('passeios').scrollIntoView({behavior:'smooth'})">
+        Nossos Passeios
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH BAR -->
+<div class="search-wrap">
+  <div class="search-bar">
+    <div class="search-field">
+      <label>Qual o seu próximo destino?</label>
+      <div class="search-field-inner">
+        <i class="fas fa-map-marker-alt"></i>
+        <input type="text" placeholder="Para onde vamos?">
+      </div>
+    </div>
+    <div class="search-field">
+      <label>Check-in</label>
+      <div class="search-field-inner">
+        <i class="fas fa-calendar"></i>
+        <input type="date">
+      </div>
+    </div>
+    <div class="search-field">
+      <label>Check-out</label>
+      <div class="search-field-inner">
+        <i class="fas fa-calendar-check"></i>
+        <input type="date">
+      </div>
+    </div>
+    <div class="search-field">
+      <label>Viajantes</label>
+      <div class="search-field-inner">
+        <i class="fas fa-user-friends"></i>
+        <input type="text" placeholder="2 Viajantes">
+      </div>
+    </div>
+    <button class="btn-buscar">
+      <i class="fas fa-search"></i> Buscar
+    </button>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-icon"><i class="fas fa-globe"></i></div>
+    <div class="stat-text">
+      <strong>Melhores Destinos</strong>
+      <span>Lugares curados para você</span>
+    </div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-icon"><i class="fas fa-tag"></i></div>
+    <div class="stat-text">
+      <strong>Garantia de Preço</strong>
+      <span>As melhores tarifas</span>
+    </div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-icon"><i class="fas fa-headset"></i></div>
+    <div class="stat-text">
+      <strong>Suporte 24/7</strong>
+      <span>Sempre ao seu lado</span>
+    </div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+    <div class="stat-text">
+      <strong>Seguro e Confiável</strong>
+      <span>Sua segurança é prioridade</span>
+    </div>
+  </div>
+</div>
+
+<!-- DESTINOS -->
+<section class="destinos" id="destinos">
+  <div class="destinos-header">
+    <div>
+      <div class="secao-eyebrow">Explore o Mundo</div>
+      <h2>Destinos<br>Populares</h2>
+      <p>De praias paradisíacas a montanhas majestosas, encontre sua próxima aventura.</p>
+    </div>
+    <div>
+      <button class="btn-ver-todos">Ver todos os destinos <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <div class="destinos-layout">
+    <!-- Card grande -->
+    <div class="card-destino">
+      <img
+        src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80"
+        alt="Santorini, Grécia"
+      >
+      <div class="card-overlay"></div>
+      <div class="card-badge">Popular</div>
+      <div class="card-info">
+        <h3>Santorini, Grécia</h3>
+        <div class="card-preco">A partir de <strong>R$ 7.900</strong></div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card-destino">
+      <img
+        src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=700&q=80"
+        alt="Phuket, Tailândia"
+      >
+      <div class="card-overlay"></div>
+      <div class="card-info">
+        <h3>Phuket, Tailândia</h3>
+        <div class="card-preco">A partir de <strong>R$ 6.500</strong></div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card-destino">
+      <img
+        src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=700&q=80"
+        alt="Banff, Canadá"
+      >
+      <div class="card-overlay"></div>
+      <div class="card-badge">Natureza</div>
+      <div class="card-info">
+        <h3>Banff, Canadá</h3>
+        <div class="card-preco">A partir de <strong>R$ 8.400</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS -->
+<div class="servicos">
+  <div class="servico-item">
+    <div class="servico-icon"><i class="fas fa-plane-departure"></i></div>
+    <div class="servico-text">
+      <strong>Passagens Aéreas</strong>
+      <span>Encontre os melhores voos</span>
+    </div>
+  </div>
+  <div class="servico-item">
+    <div class="servico-icon"><i class="fas fa-hotel"></i></div>
+    <div class="servico-text">
+      <strong>Hotéis & Resorts</strong>
+      <span>Estadias confortáveis</span>
+    </div>
+  </div>
+  <div class="servico-item">
+    <div class="servico-icon"><i class="fas fa-map-marked-alt"></i></div>
+    <div class="servico-text">
+      <strong>Pacotes de Turismo</strong>
+      <span>Experiências completas</span>
+    </div>
+  </div>
+  <div class="servico-item">
+    <div class="servico-icon"><i class="fas fa-car"></i></div>
+    <div class="servico-text">
+      <strong>Seguro Viagem</strong>
+      <span>Viaje com tranquilidade</span>
+    </div>
+  </div>
+</div>
+
+<!-- PASSEIOS -->
+<section class="passeios" id="passeios">
+  <div class="passeios-header">
+    <div class="secao-eyebrow">Próximos Passeios</div>
+    <h2>Escolha sua Aventura</h2>
+    <p>Passeios guiados, experiências únicas e momentos que duram a vida toda.</p>
+  </div>
+
+  <div class="passeios-grid">
+
+    <div class="card-passeio">
+      <img
+        src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80"
+        alt="Maldivas"
+      >
+      <div class="card-passeio-body">
+        <span class="card-tag">Praia</span>
+        <h3>Maldivas — Paraíso Tropical</h3>
+        <p>Chalés sobre a água cristalina, recifes de corais e pôres do sol inesquecíveis no Oceano Índico.</p>
+        <div class="card-passeio-footer">
+          <div>
+            <div class="card-preco-label">A partir de</div>
+            <div style="display:flex; align-items:baseline; gap:0.5rem;">
+              <span class="card-preco-valor">R$ 9.200</span>
+              <span class="card-preco-antigo">R$ 11.000</span>
+            </div>
+          </div>
+          <button class="btn-card">Saiba mais</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-passeio">
+      <img
+        src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80"
+        alt="Paris"
+      >
+      <div class="card-passeio-body">
+        <span class="card-tag">Europa</span>
+        <h3>Paris — A Cidade Luz</h3>
+        <p>Torre Eiffel, Louvre, gastronomia e romance. Paris é um destino que você nunca vai esquecer.</p>
+        <div class="card-passeio-footer">
+          <div>
+            <div class="card-preco-label">A partir de</div>
+            <div style="display:flex; align-items:baseline; gap:0.5rem;">
+              <span class="card-preco-valor">R$ 7.500</span>
+              <span class="card-preco-antigo">R$ 9.300</span>
+            </div>
+          </div>
+          <button class="btn-card">Saiba mais</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-passeio">
+      <img
+        src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=600&q=80"
+        alt="Machu Picchu"
+      >
+      <div class="card-passeio-body">
+        <span class="card-tag">Aventura</span>
+        <h3>Machu Picchu — Peru</h3>
+        <p>Uma das sete maravilhas do mundo moderna, entre montanhas dos Andes e história milenar inca.</p>
+        <div class="card-passeio-footer">
+          <div>
+            <div class="card-preco-label">A partir de</div>
+            <div style="display:flex; align-items:baseline; gap:0.5rem;">
+              <span class="card-preco-valor">R$ 5.800</span>
+              <span class="card-preco-antigo">R$ 7.100</span>
+            </div>
+          </div>
+          <button class="btn-card">Saiba mais</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter" id="newsletter">
+  <div class="secao-eyebrow" style="color:#6de4a0; margin-bottom:0.8rem;">Fique por dentro</div>
+  <h2>Receba as melhores ofertas de viagem</h2>
+  <p>Assine nossa newsletter e garanta descontos exclusivos antes de todo mundo.</p>
+  <div class="newsletter-form">
+    <input type="email" placeholder="Digite seu e-mail">
+    <button class="btn-newsletter">Assinar <i class="fas fa-arrow-right"></i></button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo-wrap">
+        <div class="footer-logo-text">Klein Trips</div>
+        <div class="footer-logo-sub">Explore the World</div>
+      </div>
+      <p class="footer-desc">Somos uma agência de viagens apaixonada por conectar pessoas a destinos incríveis ao redor do mundo. Sua aventura começa aqui.</p>
+      <div class="footer-redes">
+        <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-icon" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+      </div>
+    </div>
+
+    <div>
+      <h4>Destinos</h4>
+      <ul class="footer-links">
+        <li><a href="#">Europa</a></li>
+        <li><a href="#">Ásia</a></li>
+        <li><a href="#">América do Norte</a></li>
+        <li><a href="#">América do Sul</a></li>
+        <li><a href="#">Oceania</a></li>
+        <li><a href="#">Ilhas e Praias</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Empresa</h4>
+      <ul class="footer-links">
+        <li><a href="#">Sobre nós</a></li>
+        <li><a href="#">Nossos Pacotes</a></li>
+        <li><a href="#">Blog de Viagens</a></li>
+        <li><a href="#">Parcerias</a></li>
+        <li><a href="#">Trabalhe conosco</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Contato</h4>
+      <div class="footer-contato-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Av. Beira Mar, 2000 — Fortaleza, CE</span>
+      </div>
+      <div class="footer-contato-item">
+        <i class="fas fa-envelope"></i>
+        <span>contato@kleintrips.com.br</span>
+      </div>
+      <div class="footer-contato-item">
+        <i class="fas fa-phone"></i>
+        <span>(85) 9 9999-0000</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2024 Klein Trips. Todos os direitos reservados.</span>
+    <span>Política de Privacidade · Termos de Uso</span>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav
+  const toggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => navLinks.classList.remove('open'))
+  );
+
+  // Scroll ativo nav
+  const sections = document.querySelectorAll('section[id], nav');
+  const navAs = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    document.querySelectorAll('section[id]').forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navAs.forEach(a => {
+      a.classList.remove('ativo');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('ativo');
+    });
+  });
+</script>
+</body>
+</html>
