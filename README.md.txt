@@ -4,7 +4,7 @@ Site de agência de viagens desenvolvido como Avaliação III da disciplina de F
 
 ## 🔗 Design no Figma
 
-[Link do projeto no Figma](COLE_O_LINK_AQUI)
+[Link do projeto no Figma](https://www.figma.com/design/5E6LelEEz2Pt2TW8dHoK92/Klein-Trips?node-id=0-1&t=88UNIw1YV74Cx5FP-1)
 
 ## 🛠️ Tecnologias utilizadas
 
